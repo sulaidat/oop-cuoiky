@@ -7,7 +7,7 @@ protected:
     double khac;
 public:
     ChiPhi();
-    ChiPhi(const ChiPhi&);
+    // ChiPhi(const ChiPhi&);
     ChiPhi(double, double);
     double tong();
 };

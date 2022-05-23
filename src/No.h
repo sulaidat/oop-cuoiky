@@ -18,7 +18,7 @@ protected:
     int kyhan;
 public:
     No();
-    No(const No&);
+    // No(const No&);
     No(double, string, float, int);
     double tongSauKyHan(int);
 };
