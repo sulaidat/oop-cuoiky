@@ -16,7 +16,7 @@ protected:
     vector<SoTietKiem> stk;
 public:
     QuanLy();
-    QuanLy(string, vector<NguonThu>, vector<No>, vector<ChiPhi>, vector<SoTietKiem>);
+    QuanLy(string, vector<NguonThu>, vector<No>, vector<ChiPhi>);
 };
 
 #endif

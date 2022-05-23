@@ -6,6 +6,12 @@ using namespace std;
 
 class No {
 protected:
+    enum Lai {
+        THANG = 1,
+        _6THANG = 6,
+        NAM = 12
+    };
+    
     double sotien;
     string ngaytra;
     float lai;
