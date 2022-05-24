@@ -13,9 +13,9 @@ NguonThu::NguonThu(const NguonThu& n) {
 }
 
 NguonThu::NguonThu(double vo, double chong, double khac) {
-    vo = vo;
-    chong = chong;
-    khac = khac;
+    this->vo = vo;
+    this->chong = chong;
+    this->khac = khac;
 }
 
 double NguonThu::tong() {

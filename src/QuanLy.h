@@ -24,8 +24,8 @@ public:
     QuanLy(vector<NguonThu*>, vector<ChiPhi*>, vector<No*>);
     QuanLy(vector<NguonThu*>, vector<ChiPhi*>, vector<No*>, vector<SoTietKiem*>);
 
-    void dateToTimestamp(string);
-    string timestampToDate();
+    void getTimeStamp(string);
+    string timestampToDate(int);
     void themNguonThu();
     void themChiPhi();
     void themNo();
@@ -33,8 +33,11 @@ public:
 
     int readNguonThuFromFile(string);
     int readChiPhiFromFile(string);
+    int readNoFromFile(string);
 
     void printNguonThu();
+    void printChiPhi();
+    void printNo();
 };
 
 #endif

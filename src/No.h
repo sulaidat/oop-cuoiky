@@ -9,12 +9,6 @@ using namespace std;
 
 class No {
 protected:
-    enum Lai {
-        THANG = 1,
-        _6THANG = 6,
-        NAM = 12
-    };
-    
     double sotien;
     int timestamp;
     float lai;
@@ -24,6 +18,11 @@ public:
     // No(const No&);
     No(double, string, float, int);
     double tongSauKyHan(int);
+
+    void No::getTimeStamp(string);
+    string No::timestampToDate();
+
+    void print();
 };
 
 #endif

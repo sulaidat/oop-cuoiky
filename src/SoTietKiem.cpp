@@ -14,9 +14,9 @@ SoTietKiem::SoTietKiem(const SoTietKiem& stk) {
 }
 
 SoTietKiem::SoTietKiem(double sotien, float lai, int kyhan) {
-    sotien = sotien;
-    lai = lai;
-    kyhan = kyhan;
+    this->sotien = sotien;
+    this->lai = lai;
+    this->kyhan = kyhan;
 }
 
 double SoTietKiem::soDuSauKyHan(int k) {
