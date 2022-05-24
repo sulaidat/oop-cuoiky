@@ -12,13 +12,16 @@
 class QuanLy {
 protected:
     int timestamp;
-    vector<NguonThu> nguonthu;
-    vector<ChiPhi> chiphi;
-    vector<No> no;
-    vector<SoTietKiem> stk;
+    vector<NguonThu*> nguonthu;
+    vector<ChiPhi*> chiphi;
+    vector<No*> no;
+    vector<SoTietKiem*> stk;
 public:
     QuanLy();
-    QuanLy(string, vector<NguonThu>, vector<No>, vector<ChiPhi>);
+    QuanLy(string, vector<NguonThu*>, vector<ChiPhi*>);
+    QuanLy(string, vector<NguonThu*>, vector<ChiPhi*>, vector<No*>);
+
+    void themNo(No&);
 };
 
 #endif

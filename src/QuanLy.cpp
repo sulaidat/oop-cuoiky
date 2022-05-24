@@ -4,7 +4,7 @@ QuanLy::QuanLy() {
     timestamp = -1;
 }
 
-QuanLy::QuanLy(string today, vector<NguonThu> nguonthu, vector<No> no, vector<ChiPhi> chiphi) {
+QuanLy::QuanLy(string today, vector<NguonThu*> nguonthu, vector<ChiPhi*> chiphi) {
     if (!checkDateFormat(today)) {
         cout << "QuanLy(double, string, float, int): invalid date format (DD-MM-YYYY)\n";
         exit(0);
@@ -14,6 +14,11 @@ QuanLy::QuanLy(string today, vector<NguonThu> nguonthu, vector<No> no, vector<Ch
     regex_search(today, m, e);
     timestamp = atoi(m.str().c_str());
     nguonthu = nguonthu;
-    no = no;
     chiphi = chiphi;
 }
+
+QuanLy::QuanLy(string today, vector<NguonThu*> nguonthu, vector<ChiPhi*> chiphi, vector<No*> no): 
+QuanLy::QuanLy(today, nguonthu, chiphi) {
+    no = no;
+}
+
