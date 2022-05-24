@@ -1,13 +1,15 @@
 #ifndef QUANLY_H
 #define QUANLY_H
 
+#include "lib/CSVParser.h"
+#include "Utils.h"
 #include "NguonThu.h"
 #include "ChiPhi.h"
 #include "No.h"
 #include "SoTietKiem.h"
-#include "Global.h"
 #include <vector>
 #include <regex>
+#include <fstream>
 
 class QuanLy {
 protected:
@@ -18,10 +20,21 @@ protected:
     vector<SoTietKiem*> stk;
 public:
     QuanLy();
-    QuanLy(string, vector<NguonThu*>, vector<ChiPhi*>);
-    QuanLy(string, vector<NguonThu*>, vector<ChiPhi*>, vector<No*>);
+    QuanLy(vector<NguonThu*>, vector<ChiPhi*>);
+    QuanLy(vector<NguonThu*>, vector<ChiPhi*>, vector<No*>);
+    QuanLy(vector<NguonThu*>, vector<ChiPhi*>, vector<No*>, vector<SoTietKiem*>);
 
-    void themNo(No&);
+    void dateToTimestamp(string);
+    string timestampToDate();
+    void themNguonThu();
+    void themChiPhi();
+    void themNo();
+    void themSTK();
+
+    int readNguonThuFromFile(string);
+    int readChiPhiFromFile(string);
+
+    void printNguonThu();
 };
 
 #endif

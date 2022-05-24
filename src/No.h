@@ -1,7 +1,8 @@
 #ifndef NO_H
 #define NO_H
 
-#include "Global.h"
+#include "Utils.h"
+#include <iostream>
 #include <string>
 #include <regex>
 using namespace std;

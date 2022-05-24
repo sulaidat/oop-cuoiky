@@ -30,3 +30,6 @@ double NguonThu::tongKhac() {
     return khac;
 }
 
+void NguonThu::print() {
+    cout << vo << "\t" << chong << "\t" << khac << "\n";
+}
