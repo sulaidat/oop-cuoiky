@@ -13,7 +13,7 @@ protected:
     };
     
     double sotien;
-    string ngaytra;
+    int timestamp;
     float lai;
     int kyhan;
 public:

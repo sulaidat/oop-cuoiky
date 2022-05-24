@@ -1,15 +1,19 @@
 #include "No.h"
+#include <regex>
 
 No::No() {
     sotien = 0;
-    ngaytra = "";
+    timestamp = -1;
     lai = 0;
     kyhan = 0;
 }
 
 No::No(double sotien, string ngaytra, float lai, int kyhan) {
+    regex e("\\d{4}(?=$)");
+    smatch m;
+    regex_search(ngaytra, m, e);
+    timestamp = atoi(m.str().c_str());
     sotien = sotien;
-    ngaytra = ngaytra;
     lai = lai;
     kyhan = kyhan;
 }
