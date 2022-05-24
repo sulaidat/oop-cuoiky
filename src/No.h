@@ -1,7 +1,9 @@
 #ifndef NO_H
 #define NO_H
 
+#include "Global.h"
 #include <string>
+#include <regex>
 using namespace std;
 
 class No {

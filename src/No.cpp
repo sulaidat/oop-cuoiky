@@ -1,5 +1,4 @@
 #include "No.h"
-#include <regex>
 
 No::No() {
     sotien = 0;
@@ -9,6 +8,10 @@ No::No() {
 }
 
 No::No(double sotien, string ngaytra, float lai, int kyhan) {
+    if (!checkDateFormat(ngaytra)) {
+        cout << "No(double, string, float, int): invalid date format (DD-MM-YYYY)\n";
+        exit(0);
+    }
     regex e("\\d{4}(?=$)");
     smatch m;
     regex_search(ngaytra, m, e);

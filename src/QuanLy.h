@@ -1,11 +1,13 @@
 #ifndef QUANLY_H
 #define QUANLY_H
 
-#include <vector>
 #include "NguonThu.h"
 #include "ChiPhi.h"
 #include "No.h"
 #include "SoTietKiem.h"
+#include "Global.h"
+#include <vector>
+#include <regex>
 
 class QuanLy {
 protected:
