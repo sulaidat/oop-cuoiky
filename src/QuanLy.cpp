@@ -187,16 +187,17 @@ void QuanLy::process() {
     }
     
     // cap nhat tu no 
+    int pos_cur = 0;    
     for (No* n: no) {
-        int pos_start = n->get_ngayno() - get_mocthoigian();
-        int pos_end = n->get_ngaytra() - get_mocthoigian();
-        int pos = pos_start;
-        int kyhan = n->get_kyhan();
-        for (int i = 1; i <= n->get_ndaohan(); i++) {
-            if (exist(tienchitieu, pos)) {
-                tienchitieu[pos] -= n->tongNoSauKyHanThu(i) / kyhan;
+        int pos_end = n->get_ngaytra() - mocthoigian;
+        int thoigiantra = pos_end - pos_cur;  
+        int cnt = n->get_solantinhlai();    
+
+        for (;pos_cur <= pos_end; pos_cur++) {
+            if (exist(tienchitieu, pos_cur)) {
+                tienchitieu[pos_cur] -= n->tongNoSauKyHanThu(cnt) / thoigiantra;
             } else {
-                tienchitieu.push_back(0 - n->tongNoSauKyHanThu(i) / kyhan);
+                tienchitieu.push_back(0 - n->tongNoSauKyHanThu(cnt) / thoigiantra);
             }
         }
     }

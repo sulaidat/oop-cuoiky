@@ -29,7 +29,7 @@ public:
     string getdate_ngayno();
     string getdate_ngaytra();
     int get_kyhan();
-    int get_ndaohan();      // so lan dao han giua ngay no va ngay tra
+    int get_solantinhlai();      // so lan tinh lai giua ngay no va ngay tra
 
     double tongNoSauKyHanThu(int);
 

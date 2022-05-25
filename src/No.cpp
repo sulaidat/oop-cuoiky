@@ -73,7 +73,7 @@ int No::get_kyhan() {
     return kyhan;
 }
 
-int No::get_ndaohan() {
+int No::get_solantinhlai() {
     return lai.size();
 }
 
