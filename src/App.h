@@ -24,10 +24,12 @@ public:
         ManualInput = 1,
         FromFile = 2,
     };
+
     void init();
     void print_menu();
     void print_sub_menu();
     int get_num();
+    
 
     void run();
 };

@@ -56,7 +56,7 @@ void App::run() {
                 cout << "Nhap ngay bat dau (DD-MM-YYYY): ";
                 getline(cin, startday);
                 
-                quanly->getTimeStamp(startday);
+                quanly->update_mocthoigian(startday);
                 break;
             }
             case Menu::NhapNguonThu: {
@@ -64,13 +64,14 @@ void App::run() {
                 num = get_num();
                 switch (num) {
                     case SubMenu::ManualInput:
+                        quanly->add_nguonthu();
                         break;
                     case SubMenu::FromFile: {
                         string filepath;
                         cout << "Nhap filepath: ";
                         getline(cin, filepath);
                         cout << filepath << "\n";
-                        quanly->readNguonThuFromFile(filepath);
+                        quanly->add_nguonthu_fromfile(filepath);
                         break;
                     }
                     default:
@@ -83,13 +84,14 @@ void App::run() {
                 num = get_num();
                 switch (num) {
                     case SubMenu::ManualInput:
+                        quanly->add_chiphi();
                         break;
                     case SubMenu::FromFile: {
                         string filepath;
                         cout << "Nhap filepath: ";
                         getline(cin, filepath);
                         cout << filepath << "\n";
-                        quanly->readChiPhiFromFile(filepath);
+                        quanly->add_chiphi_fromfile(filepath);
                         break;
                     }
                     default:
@@ -98,38 +100,30 @@ void App::run() {
                 break;
             }
             case Menu::ThemNo: {
-                print_sub_menu();
-                num = get_num();
-                switch (num) {
-                    case SubMenu::ManualInput:
-                        break;
-                    case SubMenu::FromFile: {
-                        string filepath;
-                        cout << "Nhap filepath: ";
-                        getline(cin, filepath);
-                        cout << filepath << "\n";
-                        quanly->readNoFromFile(filepath);
-                        break;
-                    }
-                    default:
-                        break;
-                }
+                quanly->add_no();
                 break;
             }
             case Menu::InNguonThu:
-                quanly->printNguonThu();
+                quanly->inNguonThu();
                 break;
             case Menu::InChiPhi:
-                quanly->printChiPhi();
+                quanly->inChiPhi();
                 break;
             case Menu::InNo:
-                quanly->printNo();
+                quanly->inNo();
                 break;
-            case Menu::XuatBangTinh:
+            case Menu::XuatBangTinh: {
+                string data = quanly->exportData();
+                ofstream out("data/xuat.csv");
+                out << data;
+                out.close();
+                cout << "Data written to ./data/xuat.csv\n";
                 break;
+            }
             default:
                 cout << "Exiting...\n";
                 exit(-1);
         }
+        quanly->process();
     }
 }

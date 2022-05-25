@@ -10,17 +10,23 @@ using namespace std;
 class No {
 protected:
     double sotien;
-    int timestamp;
-    float lai;
+    int ngayno;
+    int ngaytra;
     int kyhan;
+    vector<float> lai;
 public:
     No();
     // No(const No&);
-    No(double, string, float, int);
-    double tongSauKyHan(int);
+    No(double, string, string, int);
 
-    void No::getTimeStamp(string);
-    string No::timestampToDate();
+    void update_sotien(double);
+    void update_ngayno(string);
+    void update_ngaytra(string);
+
+    string get_ngayno();
+    string get_ngaytra();
+
+    double tongSauKyHanThu(int);
 
     void print();
 };

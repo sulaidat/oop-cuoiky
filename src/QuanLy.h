@@ -10,34 +10,37 @@
 #include <vector>
 #include <regex>
 #include <fstream>
+#include <iostream>
+using namespace std;
 
 class QuanLy {
 protected:
-    int timestamp;
+    int mocthoigian;
     vector<NguonThu*> nguonthu;
     vector<ChiPhi*> chiphi;
     vector<No*> no;
     vector<SoTietKiem*> stk;
 public:
     QuanLy();
-    QuanLy(vector<NguonThu*>, vector<ChiPhi*>);
-    QuanLy(vector<NguonThu*>, vector<ChiPhi*>, vector<No*>);
     QuanLy(vector<NguonThu*>, vector<ChiPhi*>, vector<No*>, vector<SoTietKiem*>);
 
-    void getTimeStamp(string);
-    string timestampToDate(int);
-    void themNguonThu();
-    void themChiPhi();
-    void themNo();
-    void themSTK();
+    void update_mocthoigian(string);
+    void add_nguonthu();
+    void add_nguonthu_fromfile(string);
+    void add_chiphi();
+    void add_chiphi_fromfile(string);
+    void add_no();
+    void add_stk();
 
-    int readNguonThuFromFile(string);
-    int readChiPhiFromFile(string);
-    int readNoFromFile(string);
+    string get_mocthoigian(int);
 
-    void printNguonThu();
-    void printChiPhi();
-    void printNo();
+    void inNguonThu();
+    void inChiPhi();
+    void inNo();
+
+    string exportData();
+
+    void process();
 };
 
 #endif

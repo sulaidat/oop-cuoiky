@@ -2,55 +2,69 @@
 
 No::No() {
     sotien = 0;
-    timestamp = -1;
-    lai = 0;
-    kyhan = 0;
+    ngayno = 0;
+    ngaytra = 0;
 }
 
-No::No(double sotien, string ngaytra, float lai, int kyhan) {
-    if (!checkDateFormat(ngaytra)) {
-        cout << "No(double, string, float, int): invalid date format (DD-MM-YYYY)\n";
+No::No(double sotien, string ngayno, string ngaytra, int kyhan) {
+    if (!checkDateFormat(ngaytra) && !checkDateFormat(ngayno)) {
+        cout << "No(): invalid date format (DD-MM-YYYY)\n";
         exit(0);
     }
-    timestamp += stoi(ngaytra.substr(3, 2));
-    timestamp += stoi(ngaytra.substr(6)) * 12;
+    this->ngayno += stoi(ngayno.substr(3, 2));
+    this->ngayno += stoi(ngayno.substr(6)) * 12;
+    this->ngaytra += stoi(ngaytra.substr(3, 2));
+    this->ngaytra += stoi(ngaytra.substr(6)) * 12;
     this->sotien = sotien;
-    this->lai = lai;
     this->kyhan = kyhan;
+    
+    int cnt = (this->ngaytra - this->ngayno) / kyhan;
+    cout << "Tu " << ngayno << " den " << ngaytra << " co " << cnt << " ky han.\n";
+    cout << "Nhap lai cho tung ky han: \n";
+    float buf;
+    for (int i = 0; i < cnt; i++) {
+        buf = 0;
+        cin >> buf;
+        lai.push_back(buf);
+    }
 }
 
-double No::tongSauKyHan(int k) {
-    double res = sotien;
-    for (int i = 0; i < k; i++) {
-        res *= (double)(1 + lai);
+string No::get_ngayno() {
+    int time = ngayno;
+    string res = "";
+    if (time % 12 == 0) {
+        res += "12";
+        time -= 12;
+    } else {
+        res += to_string(time % 12);
     }
+    res += "-";
+    res += to_string(time / 12);
     return res;
 }
 
-
-void No::getTimeStamp(string ngaytra) {
-    if (!checkDateFormat(ngaytra)) {
-        cout << "No::getTimeStamp: invalid date format (DD-MM-YYYY)\n";
-        exit(0);
-    }
-    timestamp += stoi(ngaytra.substr(3, 2));
-    timestamp += stoi(ngaytra.substr(6)) * 12;
-}
-
-string No::timestampToDate() {
+string No::get_ngaytra() {
+    int time = ngaytra;
     string res = "";
-    int cur = timestamp;
-    if (cur % 12 == 0) {
+    if (time % 12 == 0) {
         res += "12";
-        cur -= 12;
+        time -= 12;
     } else {
-        res += to_string(cur % 12);
+        res += to_string(time % 12);
     }
     res += "-";
-    res += to_string(cur / 12);
+    res += to_string(time / 12);
+    return res;
+}
+
+double No::tongSauKyHanThu(int k) {
+    double res = sotien;
+    for (float i : lai) {
+        res *= (1 + i);
+    }
     return res;
 }
 
 void No::print() {
-    cout << sotien << "\t" << timestampToDate() << lai << "\t" << kyhan << "\n";
+    cout << sotien << "\t" << get_ngayno() << "\t" << get_ngaytra();
 }

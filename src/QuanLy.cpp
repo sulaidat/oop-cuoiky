@@ -1,36 +1,29 @@
 #include "QuanLy.h"
 
 QuanLy::QuanLy() {
-    timestamp = -1;
+    mocthoigian = 0;
 }
 
-QuanLy::QuanLy(vector<NguonThu*> nguonthu, vector<ChiPhi*> chiphi) {
+QuanLy::QuanLy(vector<NguonThu*> nguonthu, vector<ChiPhi*> chiphi, vector<No*> no, vector<SoTietKiem*> stk) {
+    this->mocthoigian = 0;
     this->nguonthu = nguonthu;
     this->chiphi = chiphi;
-}
-
-QuanLy::QuanLy(vector<NguonThu*> nguonthu, vector<ChiPhi*> chiphi, vector<No*> no): 
-QuanLy::QuanLy(nguonthu, chiphi) {
     this->no = no;
-}
-
-QuanLy::QuanLy(vector<NguonThu*> nguonthu, vector<ChiPhi*> chiphi, vector<No*> no, vector<SoTietKiem*> stk): 
-QuanLy::QuanLy(nguonthu, chiphi, no) {
     this->stk = stk;
 }
 
-void QuanLy::getTimeStamp(string startday) {
-    if (!checkDateFormat(startday)) {
-        cout << "QuanLy::getTimeStamp: invalid date format (DD-MM-YYYY)\n";
+void QuanLy::update_mocthoigian(string date) {
+    if (!checkDateFormat(date)) {
+        cout << "QuanLy::update_mocthoigian: invalid date format (DD-MM-YYYY)\n";
         exit(0);
     }
-    timestamp += stoi(startday.substr(3, 2));
-    timestamp += stoi(startday.substr(6)) * 12;
+    mocthoigian += stoi(date.substr(3, 2));
+    mocthoigian += stoi(date.substr(6)) * 12;
 }
 
-string QuanLy::timestampToDate(int idx) {
+string QuanLy::get_mocthoigian(int idx) {
     string res = "";
-    int cur = timestamp + idx;
+    int cur = mocthoigian + idx;
     if (cur % 12 == 0) {
         res += "12";
         cur -= 12;
@@ -42,109 +35,127 @@ string QuanLy::timestampToDate(int idx) {
     return res;
 }
 
-int QuanLy::readNguonThuFromFile(string filepath) {
-    ifstream file(filepath);
-    if (!file.is_open()) {
+void QuanLy::add_nguonthu() {
+    double vo, chong, khac;
+    cout << "vo, chong, khac:\n";
+    cin >> vo >> chong >> khac;
+    NguonThu* temp = new NguonThu(vo, chong, khac);
+    nguonthu.push_back(temp);
+}
+
+void QuanLy::add_nguonthu_fromfile(string filepath) {
+    ifstream in(filepath);
+    if (!in.is_open()) {
         cout << "Could not open file\n";
-        return -1;
+        return;
     }
 
     string line;
+    vector<string> values;
     
     // skip header 
-    getline(file, line);
-    
-    while (getline(file, line)) {
-        vector<string> values;
+    getline(in, line);
 
+    // check number of headers
+    CSVParser::parseLine(line, values);
+    if (values.size() != 3) {
+        cout << "QuanLy::add_nguonthu_fromfile(): Improper number of headers\n";
+        return;
+    }  
+
+    while (getline(in, line)) {
+        values.clear();
         CSVParser::parseLine(line, values);
-        if (values.size() != 3) {
-            cout << "QuanLy::readNguonThuFromFile(): Improper number of headers\n";
-            return -1;
-        }
-
         NguonThu* temp = new NguonThu(stod(values[0]), stod(values[1]), stod(values[2]));
         nguonthu.push_back(temp);
     }
-    return 0;
 }
 
-int QuanLy::readChiPhiFromFile(string filepath) {
-    ifstream file(filepath);
-    if (!file.is_open()) {
+void QuanLy::add_chiphi() {
+    double sinhhoat, khac;
+    cout << "sinh hoat, khac:\n";
+    cin >> sinhhoat >> khac;
+    ChiPhi* temp = new ChiPhi(sinhhoat, khac);
+    chiphi.push_back(temp);
+}
+
+void QuanLy::add_chiphi_fromfile(string filepath) {
+    ifstream in(filepath);
+    if (!in.is_open()) {
         cout << "Could not open file\n";
-        return -1;
+        return;
     }
 
     string line;
+    vector<string> values;
     
     // skip header 
-    getline(file, line);
-    
-    while (getline(file, line)) {
-        vector<string> values;
+    getline(in, line);
 
+    // check number of headers
+    CSVParser::parseLine(line, values);
+    if (values.size() != 2) {
+        cout << "QuanLy::add_chiphi_fromfile(): Improper number of headers\n";
+        return;
+    }  
+
+    while (getline(in, line)) {
+        values.clear();
         CSVParser::parseLine(line, values);
-        if (values.size() != 2) {
-            cout << "ChiPhi::readChiPhiFromFile(): Improper number of headers\n";
-            return -1;
-        }
-
         ChiPhi* temp = new ChiPhi(stod(values[0]), stod(values[1]));
         chiphi.push_back(temp);
     }
-    return 0;
 }
 
-int QuanLy::readNoFromFile(string filepath) {
-    ifstream file(filepath);
-    if (!file.is_open()) {
-        cout << "Could not open file\n";
-        return -1;
-    }
+void QuanLy::add_no() {
+    double sotien;
+    string ngayno, ngaytra;
+    int kyhan;
+    cout << "So tien: "; cin >> sotien;
+    cout << "Ngay no: "; getline(cin, ngayno);
+    cout << "Ngay tra: "; getline(cin, ngaytra);
 
-    string line;
-    
-    // skip header 
-    getline(file, line);
-    
-    while (getline(file, line)) {
-        vector<string> values;
-
-        CSVParser::parseLine(line, values);
-        if (values.size() != 2) {
-            cout << "No::readNoFromFile(): Improper number of headers\n";
-            return -1;
-        }
-
-        No* temp = new No(stod(values[0]), values[1], stof(values[2]), stoi(values[3]));
-        no.push_back(temp);
-    }
-    return 0;
+    No* temp = new No(sotien, ngayno, ngaytra, kyhan);
+    no.push_back(temp);
 }
 
-void QuanLy::printNguonThu() {
+void QuanLy::inNguonThu() {
     int i = 0;
     cout << "VO\tCHONG\tKHAC\n";
     for (NguonThu* temp : nguonthu) {
-        cout << timestampToDate(i++) << "\t";
+        cout << get_mocthoigian(i++) << "\t";
         temp->print();
     }
 }
 
-void QuanLy::printChiPhi () {
+void QuanLy::inChiPhi () {
     int i = 0;
     cout << "SINHHOAT\tKHAC\n";
     for (ChiPhi* temp : chiphi) {
-        cout << timestampToDate(i++) << "\t";
+        cout << get_mocthoigian(i++) << "\t";
         temp->print();
     }
 }
 
-void QuanLy::printNo() {
+void QuanLy::inNo() {
     int i = 0;
-    cout << "SOTIEN\tNGAYTRA\tLAI\tKYHAN\n";
+    cout << "SOTIEN\NGAYNO\tNGAYTRA\n";
     for (No* temp : no) {
         temp->print();
+    }
+}
+
+/* NGUONTHUVOCHONG | NGUONTHUKHAC | CHIPHI | SODUTIETKIEM | NOTRUNGBINH | CHIPHI-NOTRUNGBINH */
+string QuanLy::exportData() {
+
+}
+
+/*  Lap ke hoach gui chi tieu, tiet kiem va tra no 
+    - Nguon thu vo chong: gui tiet kiem
+    - Nguon thu khac: chi tieu va tra no
+    - */
+void QuanLy::process() {
+    for (NguonThu* tmp : nguonthu) {
+        
     }
 }
