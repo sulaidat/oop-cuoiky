@@ -11,25 +11,26 @@ using namespace std;
 class App {
 public:
     enum Menu {
-        NhapNgayBatDau = 0,
-        NhapNguonThu = 1,
-        NhapChiPhi = 2,
-        ThemNo = 3,
-        InNguonThu = 4,
-        InChiPhi = 5,
-        InNo = 6,
-        XuatBangTinh = 7,   
+        NhapNgayBatDau,
+        NhapNguonThu,
+        NhapChiPhi,
+        ThemNo,
+        AddSavingOption,
+        InNguonThu,
+        InChiPhi,
+        InNo,
+        XuatBangTinh,   
     };
     enum SubMenu {
-        ManualInput = 1,
-        FromFile = 2,
+        ManualInput,
+        FromFile,
     };
 
     void init();
     void print_menu();
     void print_sub_menu();
     int get_num();
-    
+
 
     void run();
 };

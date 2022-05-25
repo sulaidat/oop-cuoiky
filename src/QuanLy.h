@@ -20,9 +20,15 @@ protected:
     vector<ChiPhi*> chiphi;
     vector<No*> no;
     vector<SoTietKiem*> stk;
+    vector<SavingOption*> options;
+    vector<double> tienchitieu;
+
+    bool compare(No* no1, No* no2) {
+        return no1->get_sotien() > no2->get_sotien();
+    }
 public:
     QuanLy();
-    QuanLy(vector<NguonThu*>, vector<ChiPhi*>, vector<No*>, vector<SoTietKiem*>);
+    QuanLy(vector<NguonThu*>, vector<ChiPhi*>, vector<No*>, vector<SoTietKiem*>, vector<SavingOption*>);
 
     void update_mocthoigian(string);
     void add_nguonthu();
@@ -32,7 +38,8 @@ public:
     void add_no();
     void add_stk();
 
-    string get_mocthoigian(int);
+    int get_mocthoigian();
+    string getdate_mocthoigian(int);
 
     void inNguonThu();
     void inChiPhi();

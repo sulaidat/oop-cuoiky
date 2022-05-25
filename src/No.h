@@ -23,10 +23,15 @@ public:
     void update_ngayno(string);
     void update_ngaytra(string);
 
-    string get_ngayno();
-    string get_ngaytra();
+    double get_sotien();
+    int get_ngayno();
+    int get_ngaytra();
+    string getdate_ngayno();
+    string getdate_ngaytra();
+    int get_kyhan();
+    int get_ndaohan();      // so lan dao han giua ngay no va ngay tra
 
-    double tongSauKyHanThu(int);
+    double tongNoSauKyHanThu(int);
 
     void print();
 };

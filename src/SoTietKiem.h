@@ -1,20 +1,19 @@
 #ifndef SOTIETKIEM_H
 #define SOTIETKIEM_H
 
-class SoTietKiem {
-protected:
-    enum Lai {
-        THANG = 1,
-        _6THANG = 6,
-        NAM = 12
-    };
-    double sotien;
+struct SavingOption {
     float lai;
     int kyhan;
+};
+
+class SoTietKiem {
+protected:
+    double sotien;
+    SavingOption savingoption;
 public:
     SoTietKiem();
     SoTietKiem(const SoTietKiem&);
-    SoTietKiem(double, float, int);
+    SoTietKiem(double, SavingOption);
     double soDuSauKyHan(int);
 };
 

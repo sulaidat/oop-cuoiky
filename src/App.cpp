@@ -6,13 +6,14 @@ namespace Global {
     vector<ChiPhi*> chiphi;
     vector<No*> no;
     vector<SoTietKiem*> sotietkiem;
+    vector<SavingOption*> options;
 }
 using namespace Global;
 
 void App::init() {
     setbuf(stdin, NULL);
     setbuf(stdout, NULL);
-    quanly = new QuanLy(nguonthu, chiphi, no, sotietkiem);
+    quanly = new QuanLy(nguonthu, chiphi, no, sotietkiem, options);
 }
 
 void App::print_menu() {
@@ -22,17 +23,18 @@ void App::print_menu() {
     cout << "1) Nhap nguon thu\n";
     cout << "2) Nhap chi phi\n";
     cout << "3) Them no\n";
-    cout << "4) In nguon thu\n";
-    cout << "5) In chi phi\n";
-    cout << "6) In no\n";
-    cout << "7) Xuat bang tinh\n";
+    cout << "4) Add saving option\n";
+    cout << "5) In nguon thu\n";
+    cout << "6) In chi phi\n";
+    cout << "7) In no\n";
+    cout << "8) Xuat bang tinh\n";
 }
 
 void App::print_sub_menu() {
     cout << "--------------------\n";
     cout << "What do?\n";
-    cout << "1) Manual input\n";
-    cout << "2) From file\n";
+    cout << "0) Manual input\n";
+    cout << "1) From file\n";
 }
 
 int App::get_num() {
@@ -102,6 +104,12 @@ void App::run() {
             case Menu::ThemNo: {
                 quanly->add_no();
                 break;
+            }
+            case Menu::AddSavingOption: {
+                SavingOption* so = new SavingOption;
+                cout << "Nhap ky han: "; cin >> so->kyhan;
+                cout << "Nhap lai: "; cin >> so->lai;
+                options.push_back(so);
             }
             case Menu::InNguonThu:
                 quanly->inNguonThu();

@@ -29,7 +29,19 @@ No::No(double sotien, string ngayno, string ngaytra, int kyhan) {
     }
 }
 
-string No::get_ngayno() {
+double No::get_sotien() {
+    return sotien;
+}
+
+int No::get_ngayno() {
+    return ngayno;
+}
+
+int No::get_ngaytra() {
+    return ngaytra;
+}
+
+string No::getdate_ngayno() {
     int time = ngayno;
     string res = "";
     if (time % 12 == 0) {
@@ -43,7 +55,7 @@ string No::get_ngayno() {
     return res;
 }
 
-string No::get_ngaytra() {
+string No::getdate_ngaytra() {
     int time = ngaytra;
     string res = "";
     if (time % 12 == 0) {
@@ -57,14 +69,26 @@ string No::get_ngaytra() {
     return res;
 }
 
-double No::tongSauKyHanThu(int k) {
+int No::get_kyhan() {
+    return kyhan;
+}
+
+int No::get_ndaohan() {
+    return lai.size();
+}
+
+double No::tongNoSauKyHanThu(int k) {
     double res = sotien;
-    for (float i : lai) {
-        res *= (1 + i);
+    if (k > lai.size()) {
+        cout << "No::tongNoSauKyHanThu(): vuot qua ngay tra no\n";
+        exit(0);
+    }
+    for (int i = 0; i < k; i++) {
+        res *= (1 + lai[i]);
     }
     return res;
 }
 
 void No::print() {
-    cout << sotien << "\t" << get_ngayno() << "\t" << get_ngaytra();
+    cout << sotien << "\t" << getdate_ngayno() << "\t" << getdate_ngaytra();
 }

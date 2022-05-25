@@ -4,12 +4,13 @@ QuanLy::QuanLy() {
     mocthoigian = 0;
 }
 
-QuanLy::QuanLy(vector<NguonThu*> nguonthu, vector<ChiPhi*> chiphi, vector<No*> no, vector<SoTietKiem*> stk) {
+QuanLy::QuanLy(vector<NguonThu*> nguonthu, vector<ChiPhi*> chiphi, vector<No*> no, vector<SoTietKiem*> stk, vector<SavingOption*> options) {
     this->mocthoigian = 0;
     this->nguonthu = nguonthu;
     this->chiphi = chiphi;
     this->no = no;
     this->stk = stk;
+    this->options = options;
 }
 
 void QuanLy::update_mocthoigian(string date) {
@@ -21,7 +22,11 @@ void QuanLy::update_mocthoigian(string date) {
     mocthoigian += stoi(date.substr(6)) * 12;
 }
 
-string QuanLy::get_mocthoigian(int idx) {
+int QuanLy::get_mocthoigian() {
+    return mocthoigian;
+}
+
+string QuanLy::getdate_mocthoigian(int idx) {
     string res = "";
     int cur = mocthoigian + idx;
     if (cur % 12 == 0) {
@@ -69,6 +74,7 @@ void QuanLy::add_nguonthu_fromfile(string filepath) {
         NguonThu* temp = new NguonThu(stod(values[0]), stod(values[1]), stod(values[2]));
         nguonthu.push_back(temp);
     }
+
 }
 
 void QuanLy::add_chiphi() {
@@ -117,13 +123,15 @@ void QuanLy::add_no() {
 
     No* temp = new No(sotien, ngayno, ngaytra, kyhan);
     no.push_back(temp);
+    /* Uu tien tra no nhieu hon */
+    sort(no.begin(), no.end(), compare);
 }
 
 void QuanLy::inNguonThu() {
     int i = 0;
     cout << "VO\tCHONG\tKHAC\n";
     for (NguonThu* temp : nguonthu) {
-        cout << get_mocthoigian(i++) << "\t";
+        cout << getdate_mocthoigian(i++) << "\t";
         temp->print();
     }
 }
@@ -132,7 +140,7 @@ void QuanLy::inChiPhi () {
     int i = 0;
     cout << "SINHHOAT\tKHAC\n";
     for (ChiPhi* temp : chiphi) {
-        cout << get_mocthoigian(i++) << "\t";
+        cout << getdate_mocthoigian(i++) << "\t";
         temp->print();
     }
 }
@@ -150,12 +158,62 @@ string QuanLy::exportData() {
 
 }
 
-/*  Lap ke hoach gui chi tieu, tiet kiem va tra no 
+/*  
+    Lap ke hoach gui chi tieu, tiet kiem va tra no 
     - Nguon thu vo chong: gui tiet kiem
     - Nguon thu khac: chi tieu va tra no
-    - */
+    - Uu tien tra no co so tien nhieu hon
+*/
 void QuanLy::process() {
-    for (NguonThu* tmp : nguonthu) {
-        
+    
+    // CAP NHAT TIEN CHI TIEU
+    // ======================
+    tienchitieu.clear();
+
+    // cap nhat tu nguon thu
+    for (NguonThu* nt: nguonthu) {
+        tienchitieu.push_back(nt->tongKhac());
     }
+
+    // cap nhat tu chi tieu 
+    int i = 0; 
+    while (i < tienchitieu.size()) {
+        tienchitieu[i] -= chiphi[i]->tong();
+        i++;
+    }
+    if (i < chiphi.size()) {
+        tienchitieu.push_back(0-chiphi[i]->tong());
+        i++;
+    }
+    
+    // cap nhat tu no 
+    for (No* n: no) {
+        int pos_start = n->get_ngayno() - get_mocthoigian();
+        int pos_end = n->get_ngaytra() - get_mocthoigian();
+        int pos = pos_start;
+        int kyhan = n->get_kyhan();
+        for (int i = 1; i <= n->get_ndaohan(); i++) {
+            if (exist(tienchitieu, pos)) {
+                tienchitieu[pos] -= n->tongNoSauKyHanThu(i) / kyhan;
+            } else {
+                tienchitieu.push_back(0 - n->tongNoSauKyHanThu(i) / kyhan);
+            }
+        }
+    }
+
+    /*  
+        TAO SO TIET KIEM 
+        ================
+
+        Thuật toán:
+        - Chọn ra option có lãi cao nhất (X) và option có kỳ hạn ngắn nhất (Y) (bỏ qua những option k hiệu quả)
+        - Nếu thòi gian trả nợ (payingtime) > mọi kỳ hạn tiết kiệm -> k thể tạo lãi trong thời gian nợ này -> tạo sổ X
+        - payingtime = m*X.kyhan + n*Y.kyhan + r 
+            + nếu m > 0 -> tạo m (m+1 nếu r > 0) sổ X, n sổ y
+            + nếu m = 0
+                - tìm sổ Z sao cho payingtime = p*Z.kyhan + n*Y.kyhan + r -> tạo p sổ Z, n sổ Y (và 1 sổ X nếu r > 0)
+                - Nếu không có sổ Z thoả mãn, payingtime = n*Y.kyhan + r -> tạo n sổ Y (và 1 sổ X nếu r > 0)
+    */
+    
+    
 }
