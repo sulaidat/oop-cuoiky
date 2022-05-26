@@ -23,9 +23,9 @@ protected:
     vector<SavingOption*> options;
     vector<double> tienchitieu;
 
-    bool compare(No* no1, No* no2) {
-        return no1->get_sotien() > no2->get_sotien();
-    }
+    // bool cmp(No* no1, No* no2) {
+    //     return no1->get_sotien() > no2->get_sotien();
+    // }
 public:
     QuanLy();
     QuanLy(vector<NguonThu*>, vector<ChiPhi*>, vector<No*>, vector<SoTietKiem*>, vector<SavingOption*>);

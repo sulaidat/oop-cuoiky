@@ -121,11 +121,11 @@ void App::run() {
                 quanly->inNo();
                 break;
             case Menu::XuatBangTinh: {
-                string data = quanly->exportData();
-                ofstream out("data/xuat.csv");
-                out << data;
-                out.close();
-                cout << "Data written to ./data/xuat.csv\n";
+                // string data = quanly->exportData();
+                // ofstream out("data/xuat.csv");
+                // out << data;
+                // out.close();
+                // cout << "Data written to ./data/xuat.csv\n";
                 break;
             }
             default:

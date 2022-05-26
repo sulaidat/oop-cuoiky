@@ -14,6 +14,11 @@ protected:
     int ngaytra;
     int kyhan;
     vector<float> lai;
+    
+    // overload operator<
+    bool operator <(const No& no) {
+        return sotien < no.sotien;
+    }
 public:
     No();
     // No(const No&);

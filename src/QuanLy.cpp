@@ -118,45 +118,49 @@ void QuanLy::add_no() {
     string ngayno, ngaytra;
     int kyhan;
     cout << "So tien: "; cin >> sotien;
+    getchar();  // getline is anoying
     cout << "Ngay no: "; getline(cin, ngayno);
     cout << "Ngay tra: "; getline(cin, ngaytra);
+    cout << "Ky han: "; cin >> kyhan;
 
     No* temp = new No(sotien, ngayno, ngaytra, kyhan);
     no.push_back(temp);
     /* Uu tien tra no nhieu hon */
-    sort(no.begin(), no.end(), compare);
+    sort(no.begin(), no.end());
 }
 
 void QuanLy::inNguonThu() {
     int i = 0;
-    cout << "VO\tCHONG\tKHAC\n";
+    cout << "THANG\tVO\tCHONG\tKHAC\n";
     for (NguonThu* temp : nguonthu) {
-        cout << getdate_mocthoigian(i++) << "\t";
+        if (mocthoigian == 0) cout << "NULL" << "\t";
+        else cout << getdate_mocthoigian(i++) << "\t";
         temp->print();
     }
 }
 
 void QuanLy::inChiPhi () {
     int i = 0;
-    cout << "SINHHOAT\tKHAC\n";
+    cout << "THANG\tSINHHOAT\tKHAC\n";
     for (ChiPhi* temp : chiphi) {
-        cout << getdate_mocthoigian(i++) << "\t";
+        if (mocthoigian == 0) cout << "NULL" << "\t";
+        else cout << getdate_mocthoigian(i++) << "\t";
         temp->print();
     }
 }
 
 void QuanLy::inNo() {
     int i = 0;
-    cout << "SOTIEN\NGAYNO\tNGAYTRA\n";
+    cout << "SOTIEN\tNGAYNO\tNGAYTRA\n";
     for (No* temp : no) {
         temp->print();
     }
 }
 
 /* NGUONTHUVOCHONG | NGUONTHUKHAC | CHIPHI | SODUTIETKIEM | NOTRUNGBINH | CHIPHI-NOTRUNGBINH */
-string QuanLy::exportData() {
+// string QuanLy::exportData() {
 
-}
+// }
 
 /*  
     Lap ke hoach gui chi tieu, tiet kiem va tra no 
@@ -176,14 +180,16 @@ void QuanLy::process() {
     }
 
     // cap nhat tu chi tieu 
-    int i = 0; 
-    while (i < tienchitieu.size()) {
-        tienchitieu[i] -= chiphi[i]->tong();
-        i++;
-    }
-    if (i < chiphi.size()) {
-        tienchitieu.push_back(0-chiphi[i]->tong());
-        i++;
+    if (!chiphi.empty()) {
+        int i = 0; 
+        while (i < tienchitieu.size()) {
+            tienchitieu[i] -= chiphi[i]->tong();
+            i++;
+        }
+        if (i < chiphi.size()) {
+            tienchitieu.push_back(0-chiphi[i]->tong());
+            i++;
+        }
     }
     
     // cap nhat tu no 
@@ -194,7 +200,7 @@ void QuanLy::process() {
         int cnt = n->get_solantinhlai();    
 
         for (;pos_cur <= pos_end; pos_cur++) {
-            if (exist(tienchitieu, pos_cur)) {
+            if (pos_cur < tienchitieu.size()) {
                 tienchitieu[pos_cur] -= n->tongNoSauKyHanThu(cnt) / thoigiantra;
             } else {
                 tienchitieu.push_back(0 - n->tongNoSauKyHanThu(cnt) / thoigiantra);
@@ -207,7 +213,7 @@ void QuanLy::process() {
         ================
 
         Thuật toán:
-        - Chọn ra option có lãi cao nhất (X) và option có kỳ hạn ngắn nhất (Y) (bỏ qua những option k hiệu quả)
+        - Chọn ra option có lãi cao nhất (X) và option có kỳ hạn ngắn nhất (Y) 
         - Nếu thòi gian trả nợ (payingtime) > mọi kỳ hạn tiết kiệm -> k thể tạo lãi trong thời gian nợ này -> tạo sổ X
         - payingtime = m*X.kyhan + n*Y.kyhan + r 
             + nếu m > 0 -> tạo m (m+1 nếu r > 0) sổ X, n sổ y
@@ -215,6 +221,6 @@ void QuanLy::process() {
                 - tìm sổ Z sao cho payingtime = p*Z.kyhan + n*Y.kyhan + r -> tạo p sổ Z, n sổ Y (và 1 sổ X nếu r > 0)
                 - Nếu không có sổ Z thoả mãn, payingtime = n*Y.kyhan + r -> tạo n sổ Y (và 1 sổ X nếu r > 0)
     */
-    
-    
+
+
 }
