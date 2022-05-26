@@ -22,6 +22,7 @@ protected:
     vector<SoTietKiem*> stk;
     vector<SavingOption*> options;
     vector<double> tienchitieu;
+    vector<double> tienvochong;
 
     // bool cmp(No* no1, No* no2) {
     //     return no1->get_sotien() > no2->get_sotien();
@@ -30,21 +31,33 @@ public:
     QuanLy();
     QuanLy(vector<NguonThu*>, vector<ChiPhi*>, vector<No*>, vector<SoTietKiem*>, vector<SavingOption*>);
 
+    // update, add
     void update_mocthoigian(string);
     void add_nguonthu();
     void add_nguonthu_fromfile(string);
     void add_chiphi();
     void add_chiphi_fromfile(string);
     void add_no();
-    void add_stk();
+    int add_stk(int, SavingOption*);
 
+    // get
     int get_mocthoigian();
     string getdate_mocthoigian(int);
+    int get_best_option(vector<SavingOption*> opts);
+    int get_best_option() {         // wrapper
+        get_best_option(options);
+    }
+    int get_shortest_option(vector<SavingOption*> opts);
+    int get_shortest_option() {     // wrapper
+        get_shortest_option(options);
+    }
 
+    // print
     void inNguonThu();
     void inChiPhi();
     void inNo();
 
+    // other 
     string exportData();
 
     void process();

@@ -107,9 +107,10 @@ void App::run() {
             }
             case Menu::AddSavingOption: {
                 SavingOption* so = new SavingOption;
-                cout << "Nhap ky han: "; cin >> so->kyhan;
+                cout << "Nhap ky han (thang): "; cin >> so->kyhan;
                 cout << "Nhap lai: "; cin >> so->lai;
                 options.push_back(so);
+                break;
             }
             case Menu::InNguonThu:
                 quanly->inNguonThu();

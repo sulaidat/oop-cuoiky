@@ -40,6 +40,45 @@ string QuanLy::getdate_mocthoigian(int idx) {
     return res;
 }
 
+int QuanLy::get_best_option(vector<SavingOption*> opts) {
+    int idx = -1;
+    int i = 0;
+    float best = 0;
+    for (SavingOption* opt: opts) {
+        if (best < opt->lai/opt->kyhan) {
+            best = opt->lai/opt->kyhan;
+            idx = i;
+        }
+        ++i;
+    }
+    return idx;
+}
+
+int QuanLy::get_shortest_option(vector<SavingOption*> opts) {
+    int idx = -1;
+    int i = 0;
+    float best = __FLT_MAX__;
+    // chon ky han ngan nhat
+    for (SavingOption* opt: opts) {
+        if (best > opt->kyhan) {
+            best = opt->kyhan;
+            idx = i;
+        }
+        ++i;
+    }
+    // chon option hieu qua nhat trong cac ky han ngan nhat
+    best = 0;
+    i = 0;
+    for (SavingOption* opt: opts) {
+        if (opt->kyhan == opts[idx]->kyhan && best < opt->lai/opt->kyhan) {
+            best = opt->lai/opt->kyhan;
+            idx = i;
+        }
+        ++i;   
+    }
+    return idx;
+}
+
 void QuanLy::add_nguonthu() {
     double vo, chong, khac;
     cout << "vo, chong, khac:\n";
@@ -129,6 +168,26 @@ void QuanLy::add_no() {
     sort(no.begin(), no.end());
 }
 
+int QuanLy::add_stk(int idx, SavingOption* opt) {
+    if (idx < tienvochong.size()) {
+        SoTietKiem* tmp;
+        // nếu tháng đó chi tiêu bị âm, dùng tiền vợ chồng bù qua, số tiền tạo sổ sẽ bớt đi 1 khoản
+        // (chưa làm) còn trường hợp bù xong tiền vợ chồng bị âm
+        if (idx < tienchitieu.size() && tienchitieu[idx] < 0)  {
+            tmp = new SoTietKiem(tienvochong[idx] + tienchitieu[idx], *opt);
+        }
+        else {
+            tmp = new SoTietKiem(tienvochong[idx], *opt);         
+        }
+        stk.push_back(tmp);
+    }
+    else {
+        cout << "Nguon thu thang " << getdate_mocthoigian(idx) << " chua duoc nhap\n";
+        return -1;
+    }
+    return 0;
+}
+
 void QuanLy::inNguonThu() {
     int i = 0;
     cout << "THANG\tVO\tCHONG\tKHAC\n";
@@ -170,16 +229,18 @@ void QuanLy::inNo() {
 */
 void QuanLy::process() {
     
-    // CAP NHAT TIEN CHI TIEU
+    // CẬP NHẬT TIỀN (DÙNG ĐỂ) CHI TIÊU VÀ TIỀN VỢ CHỒNG
     // ======================
     tienchitieu.clear();
+    tienvochong.clear();
 
-    // cap nhat tu nguon thu
+    // Cập nhật từ nguồn thu
     for (NguonThu* nt: nguonthu) {
         tienchitieu.push_back(nt->tongKhac());
+        tienvochong.push_back(nt->tongVoChong());
     }
 
-    // cap nhat tu chi tieu 
+    // Cập nhật từ chi phí 
     if (!chiphi.empty()) {
         int i = 0; 
         while (i < tienchitieu.size()) {
@@ -192,35 +253,72 @@ void QuanLy::process() {
         }
     }
     
-    // cap nhat tu no 
+    // Cập nhật từ nợ 
     int pos_cur = 0;    
+    int pos_cur2 = 0;
     for (No* n: no) {
         int pos_end = n->get_ngaytra() - mocthoigian;
-        int thoigiantra = pos_end - pos_cur;  
+        int payingtime = pos_end - pos_cur;  
         int cnt = n->get_solantinhlai();    
 
         for (;pos_cur <= pos_end; pos_cur++) {
             if (pos_cur < tienchitieu.size()) {
-                tienchitieu[pos_cur] -= n->tongNoSauKyHanThu(cnt) / thoigiantra;
+                tienchitieu[pos_cur] -= n->tongNoSauKyHanThu(cnt) / payingtime;
             } else {
-                tienchitieu.push_back(0 - n->tongNoSauKyHanThu(cnt) / thoigiantra);
+                tienchitieu.push_back(0 - n->tongNoSauKyHanThu(cnt) / payingtime);
+            }
+            // nếu tháng trước chi tiêu có dư thì cộng vô 
+            if (pos_cur > 0 && tienchitieu[pos_cur-1] > 0) 
+                tienchitieu[pos_cur] += tienchitieu[pos_cur-1];
+        }
+
+        // TẠO SỔ TIẾT KIỆM
+        vector<SavingOption*> options_copy = options;
+        while (1) {
+            int pos_best = get_best_option(options_copy);
+            int pos_short = get_shortest_option(options_copy);
+
+            // payingtime < short.kyhan
+            if (payingtime < options_copy[pos_short]->kyhan) {
+                for (; pos_cur2 <= pos_end; pos_cur2++) {
+                    if (add_stk(pos_cur2, options_copy[pos_best]) == -1) {
+                        break;
+                    }
+                }
+            }
+
+            // payingtime >= best.kyhan
+            else if (payingtime >= options_copy[pos_best]->kyhan) {
+                while (pos_cur2 + options_copy[pos_best]->kyhan <= pos_end) {
+                    if (add_stk(pos_cur2++, options_copy[pos_best]) == -1) {
+                        break;
+                    }
+                }
+                for (; pos_cur2 <= pos_end; pos_cur2++) {
+                    if (add_stk(pos_cur2, options_copy[pos_short]) == -1) {
+                        break;
+                    }
+                }
+            }
+
+            // short.kyhan <= payingtime < best.kyhan
+            else {
+                options_copy.erase(options_copy.begin() + pos_best);
+                continue;
             }
         }
     }
 
     /*  
-        TAO SO TIET KIEM 
+        TẠO SỔ TIẾT KIỆM
         ================
-
+        Nợ to trả trước, nợ nhỏ trả sau 
         Thuật toán:
-        - Chọn ra option có lãi cao nhất (X) và option có kỳ hạn ngắn nhất (Y) 
-        - Nếu thòi gian trả nợ (payingtime) > mọi kỳ hạn tiết kiệm -> k thể tạo lãi trong thời gian nợ này -> tạo sổ X
-        - payingtime = m*X.kyhan + n*Y.kyhan + r 
-            + nếu m > 0 -> tạo m (m+1 nếu r > 0) sổ X, n sổ y
-            + nếu m = 0
-                - tìm sổ Z sao cho payingtime = p*Z.kyhan + n*Y.kyhan + r -> tạo p sổ Z, n sổ Y (và 1 sổ X nếu r > 0)
-                - Nếu không có sổ Z thoả mãn, payingtime = n*Y.kyhan + r -> tạo n sổ Y (và 1 sổ X nếu r > 0)
+        1 Chọn ra option có lãi cao nhất (X) và option có kỳ hạn ngắn nhất (Y) 
+        2 Nếu payingtime < Y.kyhan -> tạo toàn sổ X
+        3 Nếu payingtime >= X.kyhan -> tạo nbest = (payingtime - X.kyhan + 1) sổ X và nshort = payingtime - nbest sổ Y
+            (Ví dụ payingtime = 4, kỳ hạn X là 3 -> 2 tháng đầu tạo 2 sổ X, 2 tháng sau tạo 2 sổ Y)\
+        4 Nếu Y <= payingtime < X -> bỏ X và lặp lại bước 1
     */
-
 
 }
