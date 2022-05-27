@@ -234,10 +234,10 @@ int QuanLy::rutien(double sotienphaitra, int pos) {
     return -1;
 }
 
-/* NGUONTHUVOCHONG | NGUONTHUKHAC | CHIPHI | SODUTIETKIEM | NOTRUNGBINH | CHIPHI-NOTRUNGBINH */
-// string QuanLy::exportData() {
+/* THANG | NGUON:THUVO | CHONG | KHAC | CHIPHI:SINHHOAT | KHAC | STK:TRONGKYHAN | DAOHAN | TAOSTK:SOTIEN | KYHAN | LAI | NO:SOTIEN | KYHAN | LAI | NGAYTRA */
+string QuanLy::exportData() {
 
-// }
+}
 
 /*  
     Lap ke hoach gui chi tieu, tiet kiem va tra no 

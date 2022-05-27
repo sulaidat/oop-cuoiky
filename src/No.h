@@ -17,7 +17,7 @@ protected:
     
     // overload operator<
     bool operator <(const No& no) {
-        return sotien < no.sotien;
+        return ngaytra < no.ngaytra;
     }
 public:
     No();
