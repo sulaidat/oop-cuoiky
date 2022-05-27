@@ -27,6 +27,10 @@ int QuanLy::get_mocthoigian() {
 }
 
 string QuanLy::getdate_mocthoigian(int idx) {
+    if (mocthoigian == 0) {
+        string res = "(chua nhap moc thoi gian)";
+        return res;
+    }
     string res = "";
     int cur = mocthoigian + idx;
     if (cur % 12 == 0) {
@@ -257,6 +261,7 @@ string QuanLy::exportData() {
     data += CSVParser::writeLine(values);
     values.clear();
 
+    int idx_no = 0;
     for (int i = 0; i < nguonthu.size(); i++) {
         values.push_back(getdate_mocthoigian(i));
         values.push_back(to_string(nguonthu[i]->tongVoChong()));
@@ -268,10 +273,16 @@ string QuanLy::exportData() {
         values.push_back("CHUALAM");
         values.push_back("CHUALAM");
         values.push_back(to_string(tienvochong[i]));
-        values.push_back(to_string(stk[i]->get_kyhan()));
-        values.push_back(to_string(stk[i]->get_lai()));
-        if (!no.empty() && i == no[i]->get_ngaytra() - mocthoigian) {
-            values.push_back(to_string(no[i]->tongNoSauKyHanThu(no[i]->get_solantinhlai())));
+        if (i < stk.size()) {
+            values.push_back(to_string(stk[i]->get_kyhan()));
+            values.push_back(to_string(stk[i]->get_lai()));
+        } else {
+            values.push_back("NULL");
+            values.push_back("NULL");
+        }
+        if (!no.empty() && idx_no < no.size() && i == no[idx_no]->get_ngaytra() - mocthoigian) {
+            values.push_back(to_string(no[idx_no]->tongNoSauKyHanThu(no[idx_no]->get_solantinhlai())));
+            idx_no++;
         } else 
             values.push_back("0");
         data += "\n";
@@ -312,12 +323,16 @@ void QuanLy::process() {
     tienvochong.clear();
     int pos_cur = 0;
     int idx_no = 0;
-    int pos_trano = no[idx_no]->get_ngaytra() - get_mocthoigian();
-    No* ptr_no = no[idx_no];
+    No* ptr_no = NULL;
+    int pos_trano;
+    if (idx_no < no.size()) {
+        pos_trano = no[idx_no]->get_ngaytra() - get_mocthoigian();
+        ptr_no = no[idx_no];
+    }
 
     for (;; pos_cur++) {
 
-        if (pos_cur >= pos_trano) {
+        if (ptr_no != NULL && pos_cur >= pos_trano) {
             idx_no++;
             if (idx_no < no.size()) {
                 pos_trano = no[idx_no]->get_ngaytra() - get_mocthoigian();
@@ -326,8 +341,7 @@ void QuanLy::process() {
         }
 
         // 1. tiensauchitieu = nguonthu.khac và tienvochong = nguonthu.vochong 
-        if (pos_cur >= nguonthu.size()) {
-            cout << "QuanLy::process(): chua nhap Nguon thu cho thang " << getdate_mocthoigian(pos_cur) << "\n";
+        if (nguonthu.empty() || (pos_cur != 0 && pos_cur >= nguonthu.size())) {
             return;
         }
         tiensauchitieu.push_back(nguonthu[pos_cur]->tongKhac());
@@ -394,20 +408,23 @@ void QuanLy::process() {
                 Nếu không có, tạo sổ với saving option có lãi cao nhất
         */
 
+        if (options.empty()) continue;
         vector<SavingOption*> options_copy = options;
         int pos_best = get_best_option(options_copy);
-        while (options_copy[pos_best]->kyhan + pos_cur > pos_trano) {
-            options_copy.erase(options_copy.begin() + pos_best);
-            if (!options_copy.empty()) {
-                pos_best = get_best_option(options_copy);
-            } else break;
-        }
-        if (options_copy.empty()) {
-            pos_best = get_best_option();
-            add_stk(pos_cur, options[pos_best]);
-        }
-        else {
-            add_stk(pos_cur, options_copy[pos_best]);
-        }
+        if (ptr_no != NULL) {
+            while (options_copy[pos_best]->kyhan + pos_cur > pos_trano) {
+                options_copy.erase(options_copy.begin() + pos_best);
+                if (!options_copy.empty()) {
+                    pos_best = get_best_option(options_copy);
+                } else break;
+            }
+            if (options_copy.empty()) {
+                pos_best = get_best_option();
+                add_stk(pos_cur, options[pos_best]);
+            }
+            else {
+                add_stk(pos_cur, options_copy[pos_best]);
+            }
+        } else add_stk(pos_cur, options_copy[pos_best]);
     }
 }

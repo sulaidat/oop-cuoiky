@@ -11,6 +11,8 @@ No::No(double sotien, string ngayno, string ngaytra, int kyhan) {
         cout << "No(): invalid date format (DD-MM-YYYY)\n";
         exit(0);
     }
+    this->ngayno = 0;
+    this->ngaytra = 0;
     this->ngayno += stoi(ngayno.substr(3, 2));
     this->ngayno += stoi(ngayno.substr(6)) * 12;
     this->ngaytra += stoi(ngaytra.substr(3, 2));

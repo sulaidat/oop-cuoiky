@@ -43,11 +43,11 @@ public:
     string getdate_mocthoigian(int);
     int get_best_option(vector<SavingOption*> opts);
     int get_best_option() {         // wrapper
-        get_best_option(options);
+        return get_best_option(options);
     }
     int get_shortest_option(vector<SavingOption*> opts);
     int get_shortest_option() {     // wrapper
-        get_shortest_option(options);
+        return get_shortest_option(options);
     }
     double get_sodu_trongkyhan(int idx);
     double get_sodu_daohan(int idx);
