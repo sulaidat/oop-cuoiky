@@ -171,14 +171,17 @@ void QuanLy::add_no() {
 int QuanLy::add_stk(int idx, SavingOption* opt) {
     if (idx < tienvochong.size()) {
         SoTietKiem* tmp;
-        // nếu tháng đó chi tiêu bị âm, dùng tiền vợ chồng bù qua, số tiền tạo sổ sẽ bớt đi 1 khoản
-        // (chưa làm) còn trường hợp bù xong tiền vợ chồng bị âm
-        if (idx < tienchitieu.size() && tienchitieu[idx] < 0)  {
-            tmp = new SoTietKiem(tienvochong[idx] + tienchitieu[idx], *opt);
+        // nếu tiensauchitieuno bị âm, dùng tiền vợ chồng bù qua, số tiền tạo sổ sẽ bớt đi 1 khoản
+        if (idx < tiensauchitieu.size()) {
+            if (tiensauchitieu[idx] < 0)  {
+                if (tienvochong[idx] + tiensauchitieu[idx] > 0) {
+                    tmp = new SoTietKiem(tienvochong[idx] + tiensauchitieu[idx], *opt);
+                }
+                else return 0;
+            }
         }
-        else {
-            tmp = new SoTietKiem(tienvochong[idx], *opt);         
-        }
+
+        tmp = new SoTietKiem(tienvochong[idx], *opt);
         stk.push_back(tmp);
     }
     else {
@@ -229,96 +232,116 @@ void QuanLy::inNo() {
 */
 void QuanLy::process() {
     
-    // CẬP NHẬT TIỀN (DÙNG ĐỂ) CHI TIÊU VÀ TIỀN VỢ CHỒNG
-    // ======================
-    tienchitieu.clear();
-    tienvochong.clear();
-
-    // Cập nhật từ nguồn thu
-    for (NguonThu* nt: nguonthu) {
-        tienchitieu.push_back(nt->tongKhac());
-        tienvochong.push_back(nt->tongVoChong());
-    }
-
-    // Cập nhật từ chi phí 
-    if (!chiphi.empty()) {
-        int i = 0; 
-        while (i < tienchitieu.size()) {
-            tienchitieu[i] -= chiphi[i]->tong();
-            i++;
-        }
-        if (i < chiphi.size()) {
-            tienchitieu.push_back(0-chiphi[i]->tong());
-            i++;
-        }
-    }
-    
-    // Cập nhật từ nợ 
-    int pos_cur = 0;    
-    int pos_cur2 = 0;
-    for (No* n: no) {
-        int pos_end = n->get_ngaytra() - mocthoigian;
-        int payingtime = pos_end - pos_cur;  
-        int cnt = n->get_solantinhlai();    
-
-        for (;pos_cur <= pos_end; pos_cur++) {
-            if (pos_cur < tienchitieu.size()) {
-                tienchitieu[pos_cur] -= n->tongNoSauKyHanThu(cnt) / payingtime;
-            } else {
-                tienchitieu.push_back(0 - n->tongNoSauKyHanThu(cnt) / payingtime);
-            }
-            // nếu tháng trước chi tiêu có dư thì cộng vô 
-            if (pos_cur > 0 && tienchitieu[pos_cur-1] > 0) 
-                tienchitieu[pos_cur] += tienchitieu[pos_cur-1];
-        }
-
-        // TẠO SỔ TIẾT KIỆM
-        vector<SavingOption*> options_copy = options;
-        while (1) {
-            int pos_best = get_best_option(options_copy);
-            int pos_short = get_shortest_option(options_copy);
-
-            // payingtime < short.kyhan
-            if (payingtime < options_copy[pos_short]->kyhan) {
-                for (; pos_cur2 <= pos_end; pos_cur2++) {
-                    if (add_stk(pos_cur2, options_copy[pos_best]) == -1) {
-                        break;
-                    }
-                }
-            }
-
-            // payingtime >= best.kyhan
-            else if (payingtime >= options_copy[pos_best]->kyhan) {
-                while (pos_cur2 + options_copy[pos_best]->kyhan <= pos_end) {
-                    if (add_stk(pos_cur2++, options_copy[pos_best]) == -1) {
-                        break;
-                    }
-                }
-                for (; pos_cur2 <= pos_end; pos_cur2++) {
-                    if (add_stk(pos_cur2, options_copy[pos_short]) == -1) {
-                        break;
-                    }
-                }
-            }
-
-            // short.kyhan <= payingtime < best.kyhan
-            else {
-                options_copy.erase(options_copy.begin() + pos_best);
-                continue;
-            }
-        }
-    }
-
     /*  
-        TẠO SỔ TIẾT KIỆM
-        ================
-        Nợ to trả trước, nợ nhỏ trả sau 
-        Thuật toán:
-        1 Chọn ra option có lãi cao nhất (X) và option có kỳ hạn ngắn nhất (Y) 
-        2 Nếu payingtime < Y.kyhan -> tạo toàn sổ X
-        3 Nếu payingtime >= X.kyhan -> tạo nbest = (payingtime - X.kyhan + 1) sổ X và nshort = payingtime - nbest sổ Y
-            (Ví dụ payingtime = 4, kỳ hạn X là 3 -> 2 tháng đầu tạo 2 sổ X, 2 tháng sau tạo 2 sổ Y)\
-        4 Nếu Y <= payingtime < X -> bỏ X và lặp lại bước 1
+        CẬP NHẬP, XỬ LÝ
+        ================ 
+        chenhlech = 0
+        1. tiensauchitieu = nguonthu.khac và tienvochong = nguonthu.vochong 
+        2. tiensauchitieu -= chiphi. Nếu âm tienvochong += tiensauchitieu, tiensauchitieu = 0
+                tienvochong < 0, tienvochong += rút tiền từ stk cho tới khi = 0 hoặc hết tiền stk
+                    - hết tiền stk: Tuyên bố phá sản
+        3. Xử lý đáo hạn: duyệt qua sổ tiết kiêm, sổ nào đáo hạn thì tienvochong += stk[x].sodu()
+        4. Ngày trả nợ: chenhlech = no
+        nếu chenhlech <= tienvochong: tienvochong -= chenhlech
+        nếu chenhlech > tienvochong: chenhlech -= tienvochong, tienvochong = 0,
+            chenhlech -= rút tiền từ stk cho tới khi = 0 hoặc hết tiền stk
+                - hết tiền stk: Tuyên bố phá sản
+        5. Tạo Sổ tiết kiệm (chỉ khi tienvochong > 0)
     */
 
+    double chenhlech = 0;
+    tiensauchitieu.clear();
+    tienvochong.clear();
+    int pos_cur = 0;
+    int idx_no = 0;
+    int pos_trano = no[idx_no]->get_ngaytra() - get_mocthoigian();
+    No* ptr_no = no[idx_no];
+
+    for (;; pos_cur++) {
+
+        // 1. tiensauchitieu = nguonthu.khac và tienvochong = nguonthu.vochong 
+        if (pos_cur >= nguonthu.size()) {
+            cout << "QuanLy::process(): chua nhap Nguon thu cho thang " << getdate_mocthoigian(pos_cur) << "\n";
+            return;
+        }
+        tiensauchitieu.push_back(nguonthu[pos_cur]->tongKhac());
+        tienvochong.push_back(nguonthu[pos_cur]->tongVoChong());
+
+        // 2. tiensauchitieu -= chiphi. Nếu âm tienvochong += tiensauchitieu, tiensauchitieu = 0
+        //         tienvochong < 0, tienvochong += rút tiền từ stk cho tới khi = 0 hoặc hết tiền stk
+        //             - hết tiền stk: Tuyên bố phá sản
+        if (pos_cur < chiphi.size()) {
+            tiensauchitieu[pos_cur] -= chiphi[pos_cur]->tong();
+            if (tiensauchitieu[pos_cur] < 0) {
+                tienvochong[pos_cur] += tiensauchitieu[pos_cur];
+                tiensauchitieu[pos_cur] = 0;
+                if (tienvochong[pos_cur] < 0) {
+                    if (stk.empty()) {
+                        cout << "QuanLy::Process(): PHA SAN (khong co so tiet kiem)\n";
+                        return;
+                    } else if (rutien(-tienvochong[pos_cur]) == -1) {
+                        cout << "QuanLy::Process(): PHA SAN (so du stk khong du)\n";
+                        return;
+                    } else {
+                        tienvochong[pos_cur] = 0;
+                    }
+                }
+            }
+        }
+
+        // 3. Xử lý đáo hạn: duyệt qua sổ tiết kiêm, sổ nào đáo hạn thì tienvochong += stk[x].sodu()
+        for (SavingOption* opt: options) {
+            int pos_daohan = pos_cur - opt->kyhan;
+            if (pos_daohan >= 0 && !stk[pos_daohan]->isDaohan()) {
+                tienvochong[pos_cur] += stk[pos_daohan]->soDuSauKyHan(1);
+                stk[pos_daohan]->setDaohan();
+            }
+        }
+
+        // 4. Ngày trả nợ: chenhlech = no
+        // nếu chenhlech <= tienvochong: tienvochong -= chenhlech
+        // nếu chenhlech > tienvochong: chenhlech -= tienvochong, tienvochong = 0,
+        //     chenhlech -= rút tiền từ stk cho tới khi = 0 hoặc hết tiền stk
+        //         - hết tiền stk: Tuyên bố phá sản       
+        if (pos_cur == pos_trano) {
+            double chenhlech = ptr_no->tongNoNgayTra();
+            if (chenhlech < tienvochong[pos_cur]) tienvochong[pos_cur] -= chenhlech;
+            else {
+                chenhlech -= tienvochong[pos_cur];
+                tienvochong[pos_cur] = 0;
+                if (rutien(chenhlech) == -1) {
+                    cout << "QuanLy::process(): PHA SAN (so du stk khong du)\n";
+                    return;
+                }
+            }
+        }
+
+        // 5. Tạo Sổ tiết kiệm (chỉ khi tienvochong > 0)
+        if (tienvochong[pos_cur] <= 0) continue;
+
+        /*  
+            TẠO SỔ TIẾT KIỆM
+            ================
+            Nợ to trả trước, nợ nhỏ trả sau 
+            Thuật toán:
+            1. Chon ra saving option có lãi cao nhất mà kyhan <= ngaytrano
+                Nếu không có, tạo sổ với saving option có lãi cao nhất
+        */
+
+        vector<SavingOption*> options_copy = options;
+        int pos_best = get_best_option(options_copy);
+        while (options_copy[pos_best]->kyhan + pos_cur > pos_trano) {
+            options_copy.erase(options_copy.begin() + pos_best);
+            if (!options_copy.empty()) {
+                pos_best = get_best_option(options_copy);
+            } else break;
+        }
+        if (options_copy.empty()) {
+            pos_best = get_best_option();
+            add_stk(pos_cur, options[pos_best]);
+        }
+        else {
+            add_stk(pos_cur, options_copy[pos_best]);
+        }
+    }
 }

@@ -37,6 +37,7 @@ public:
     int get_solantinhlai();      // so lan tinh lai giua ngay no va ngay tra
 
     double tongNoSauKyHanThu(int);
+    double tongNoNgayTra();
 
     void print();
 };

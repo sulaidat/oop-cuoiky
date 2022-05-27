@@ -21,12 +21,10 @@ protected:
     vector<No*> no;
     vector<SoTietKiem*> stk;
     vector<SavingOption*> options;
-    vector<double> tienchitieu;
+    
+    // other headers
+    vector<double> tiensauchitieu;    // tiền sau trả chi phí và trả nợ cho tháng
     vector<double> tienvochong;
-
-    // bool cmp(No* no1, No* no2) {
-    //     return no1->get_sotien() > no2->get_sotien();
-    // }
 public:
     QuanLy();
     QuanLy(vector<NguonThu*>, vector<ChiPhi*>, vector<No*>, vector<SoTietKiem*>, vector<SavingOption*>);
@@ -58,6 +56,7 @@ public:
     void inNo();
 
     // other 
+    int rutien(double sotienphaitra);
     string exportData();
 
     void process();

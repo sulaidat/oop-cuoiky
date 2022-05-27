@@ -10,11 +10,14 @@ class SoTietKiem {
 protected:
     double sotien;
     SavingOption savingoption;
+    bool daohan;
 public:
     SoTietKiem();
     SoTietKiem(const SoTietKiem&);
     SoTietKiem(double, SavingOption);
     double soDuSauKyHan(int);
+    bool isDaohan();
+    void setDaohan();
 };
 
 #endif

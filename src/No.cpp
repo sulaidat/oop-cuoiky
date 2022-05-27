@@ -89,6 +89,14 @@ double No::tongNoSauKyHanThu(int k) {
     return res;
 }
 
+double No::tongNoNgayTra() {
+    double res = sotien;
+    for (int i = 0; i < lai.size(); i++) {
+        res *= (1 + lai[i]);
+    }
+    return res;
+}
+
 void No::print() {
     cout << sotien << "\t" << getdate_ngayno() << "\t" << getdate_ngaytra();
 }
