@@ -17,6 +17,8 @@ public:
     SoTietKiem(double, SavingOption);
     void set_sotien(double);
     double get_sotien();
+    int get_kyhan();
+    float get_lai();
     double soduSauKyHan(int);
     bool isDaohan();
     void setDaohan();

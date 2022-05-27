@@ -28,6 +28,14 @@ double SoTietKiem::get_sotien() {
     return sotien;
 }
 
+int SoTietKiem::get_kyhan() {
+    return savingoption.kyhan;
+}
+
+float SoTietKiem::get_lai() {
+    return savingoption.lai;
+}
+
 double SoTietKiem::soduSauKyHan(int k) {
     double res = sotien;
     for (int i = 0; i < k; i++) {

@@ -49,6 +49,8 @@ public:
     int get_shortest_option() {     // wrapper
         get_shortest_option(options);
     }
+    double get_sodu_trongkyhan(int idx);
+    double get_sodu_daohan(int idx);
 
     // print
     void inNguonThu();
@@ -56,7 +58,7 @@ public:
     void inNo();
 
     // other 
-    int rutien(double sotienphaitra, int pos);
+    int ruttien(double sotienphaitra, int pos);
     string exportData();
 
     void process();

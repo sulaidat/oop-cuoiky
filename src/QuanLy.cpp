@@ -79,6 +79,11 @@ int QuanLy::get_shortest_option(vector<SavingOption*> opts) {
     return idx;
 }
 
+// double QuanLy::get_sodu_trongkyhan(int idx) {
+// }
+// double QuanLy::get_sodu_daohan(int idx) {
+// }
+
 void QuanLy::add_nguonthu() {
     double vo, chong, khac;
     cout << "vo, chong, khac:\n";
@@ -220,7 +225,7 @@ void QuanLy::inNo() {
 }
 
 // rút từ sổ mới trước
-int QuanLy::rutien(double sotienphaitra, int pos) {
+int QuanLy::ruttien(double sotienphaitra, int pos) {
     for (int i = pos; i >= 0; i--) {
         if (stk[pos]->isDaohan()) continue;
         if (stk[pos]->get_sotien() > sotienphaitra) {
@@ -228,15 +233,53 @@ int QuanLy::rutien(double sotienphaitra, int pos) {
             return 0;
         } else {
             sotienphaitra -= stk[pos]->get_sotien();
+            stk[pos]->set_sotien(0);
             stk[pos]->setDaohan();
         }
     }
     return -1;
 }
 
-/* THANG | NGUON:THUVO | CHONG | KHAC | CHIPHI:SINHHOAT | KHAC | STK:TRONGKYHAN | DAOHAN | TAOSTK:SOTIEN | KYHAN | LAI | NO:SOTIEN | KYHAN | LAI | NGAYTRA */
+/* THANG | NGUON>>VOCHONG | KHAC | CHIPHI | STK>>TRONGKYHAN | DAOHAN | TAOSTK:SOTIEN | KYHAN | LAI | NO>>SOTIEN */
 string QuanLy::exportData() {
+    string data = "";
+    vector<string> values;
+    values.push_back("THANG");
+    values.push_back("NGUON>>VOCHONG");
+    values.push_back("KHAC");
+    values.push_back("CHIPHI");;
+    values.push_back("STK>>TRONGKYHAN");
+    values.push_back("DAOHAN");
+    values.push_back("TAOSTK>>SOTIEN");
+    values.push_back("KYHAN");
+    values.push_back("LAI");
+    values.push_back("NO>>SOTIEN");
+    data += CSVParser::writeLine(values);
+    values.clear();
 
+    for (int i = 0; i < nguonthu.size(); i++) {
+        values.push_back(getdate_mocthoigian(i));
+        values.push_back(to_string(nguonthu[i]->tongVoChong()));
+        values.push_back(to_string(nguonthu[i]->tongKhac()));
+        if (i < chiphi.size()) 
+            values.push_back(to_string(chiphi[i]->tong()));
+        else 
+            values.push_back("0");
+        values.push_back("CHUALAM");
+        values.push_back("CHUALAM");
+        values.push_back(to_string(tienvochong[i]));
+        values.push_back(to_string(stk[i]->get_kyhan()));
+        values.push_back(to_string(stk[i]->get_lai()));
+        if (!no.empty() && i == no[i]->get_ngaytra() - mocthoigian) {
+            values.push_back(to_string(no[i]->tongNoSauKyHanThu(no[i]->get_solantinhlai())));
+        } else 
+            values.push_back("0");
+        data += "\n";
+        data += CSVParser::writeLine(values);
+        values.clear();
+    }
+
+    return data;
 }
 
 /*  
@@ -311,7 +354,7 @@ void QuanLy::process() {
                     if (stk.empty()) {
                         cout << "QuanLy::Process(): PHA SAN (khong co so tiet kiem)\n";
                         return;
-                    } else if (rutien(-tienvochong[pos_cur], pos_cur) == -1) {
+                    } else if (ruttien(-tienvochong[pos_cur], pos_cur) == -1) {
                         cout << "QuanLy::Process(): PHA SAN (so du stk khong du)\n";
                         return;
                     } else {
@@ -332,7 +375,7 @@ void QuanLy::process() {
             else {
                 chenhlech -= tienvochong[pos_cur];
                 tienvochong[pos_cur] = 0;
-                if (rutien(chenhlech, pos_cur) == -1) {
+                if (ruttien(chenhlech, pos_cur) == -1) {
                     cout << "QuanLy::process(): PHA SAN (so du stk khong du)\n";
                     return;
                 }
