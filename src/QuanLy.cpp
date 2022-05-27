@@ -219,6 +219,11 @@ void QuanLy::inNo() {
     }
 }
 
+// rút từ
+int QuanLy::rutien(double sotienphaitra) {
+
+}
+
 /* NGUONTHUVOCHONG | NGUONTHUKHAC | CHIPHI | SODUTIETKIEM | NOTRUNGBINH | CHIPHI-NOTRUNGBINH */
 // string QuanLy::exportData() {
 
@@ -237,10 +242,10 @@ void QuanLy::process() {
         ================ 
         chenhlech = 0
         1. tiensauchitieu = nguonthu.khac và tienvochong = nguonthu.vochong 
-        2. tiensauchitieu -= chiphi. Nếu âm tienvochong += tiensauchitieu, tiensauchitieu = 0
+        2. Xử lý đáo hạn: duyệt qua sổ tiết kiêm, sổ nào đáo hạn thì tienvochong += stk[x].sodu()
+        3. tiensauchitieu -= chiphi. Nếu âm tienvochong += tiensauchitieu, tiensauchitieu = 0
                 tienvochong < 0, tienvochong += rút tiền từ stk cho tới khi = 0 hoặc hết tiền stk
                     - hết tiền stk: Tuyên bố phá sản
-        3. Xử lý đáo hạn: duyệt qua sổ tiết kiêm, sổ nào đáo hạn thì tienvochong += stk[x].sodu()
         4. Ngày trả nợ: chenhlech = no
         nếu chenhlech <= tienvochong: tienvochong -= chenhlech
         nếu chenhlech > tienvochong: chenhlech -= tienvochong, tienvochong = 0,
@@ -266,8 +271,17 @@ void QuanLy::process() {
         }
         tiensauchitieu.push_back(nguonthu[pos_cur]->tongKhac());
         tienvochong.push_back(nguonthu[pos_cur]->tongVoChong());
+        
+        // 2. Xử lý đáo hạn: duyệt qua sổ tiết kiêm, sổ nào đáo hạn thì tienvochong += stk[x].sodu()
+        for (SavingOption* opt: options) {
+            int pos_daohan = pos_cur - opt->kyhan;
+            if (pos_daohan >= 0 && !stk[pos_daohan]->isDaohan()) {
+                tienvochong[pos_cur] += stk[pos_daohan]->soDuSauKyHan(1);
+                stk[pos_daohan]->setDaohan();
+            }
+        }
 
-        // 2. tiensauchitieu -= chiphi. Nếu âm tienvochong += tiensauchitieu, tiensauchitieu = 0
+        // 3. tiensauchitieu -= chiphi. Nếu âm tienvochong += tiensauchitieu, tiensauchitieu = 0
         //         tienvochong < 0, tienvochong += rút tiền từ stk cho tới khi = 0 hoặc hết tiền stk
         //             - hết tiền stk: Tuyên bố phá sản
         if (pos_cur < chiphi.size()) {
@@ -286,15 +300,6 @@ void QuanLy::process() {
                         tienvochong[pos_cur] = 0;
                     }
                 }
-            }
-        }
-
-        // 3. Xử lý đáo hạn: duyệt qua sổ tiết kiêm, sổ nào đáo hạn thì tienvochong += stk[x].sodu()
-        for (SavingOption* opt: options) {
-            int pos_daohan = pos_cur - opt->kyhan;
-            if (pos_daohan >= 0 && !stk[pos_daohan]->isDaohan()) {
-                tienvochong[pos_cur] += stk[pos_daohan]->soDuSauKyHan(1);
-                stk[pos_daohan]->setDaohan();
             }
         }
 
