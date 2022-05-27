@@ -20,7 +20,15 @@ SoTietKiem::SoTietKiem(double sotien, SavingOption savingoption) {
     this->savingoption = savingoption;
 }
 
-double SoTietKiem::soDuSauKyHan(int k) {
+void SoTietKiem::set_sotien(double sotien) {
+    this->sotien = sotien;
+}
+
+double SoTietKiem::get_sotien() {
+    return sotien;
+}
+
+double SoTietKiem::soduSauKyHan(int k) {
     double res = sotien;
     for (int i = 0; i < k; i++) {
         res *= (double)(1 + savingoption.lai);

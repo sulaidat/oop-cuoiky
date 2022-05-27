@@ -56,7 +56,7 @@ public:
     void inNo();
 
     // other 
-    int rutien(double sotienphaitra);
+    int rutien(double sotienphaitra, int pos);
     string exportData();
 
     void process();

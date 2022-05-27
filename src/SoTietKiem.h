@@ -15,7 +15,9 @@ public:
     SoTietKiem();
     SoTietKiem(const SoTietKiem&);
     SoTietKiem(double, SavingOption);
-    double soDuSauKyHan(int);
+    void set_sotien(double);
+    double get_sotien();
+    double soduSauKyHan(int);
     bool isDaohan();
     void setDaohan();
 };

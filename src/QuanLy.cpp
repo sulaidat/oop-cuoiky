@@ -219,9 +219,19 @@ void QuanLy::inNo() {
     }
 }
 
-// rút từ
-int QuanLy::rutien(double sotienphaitra) {
-
+// rút từ sổ mới trước
+int QuanLy::rutien(double sotienphaitra, int pos) {
+    for (int i = pos; i >= 0; i--) {
+        if (stk[pos]->isDaohan()) continue;
+        if (stk[pos]->get_sotien() > sotienphaitra) {
+            stk[pos]->set_sotien(stk[pos]->get_sotien() - sotienphaitra);
+            return 0;
+        } else {
+            sotienphaitra -= stk[pos]->get_sotien();
+            stk[pos]->setDaohan();
+        }
+    }
+    return -1;
 }
 
 /* NGUONTHUVOCHONG | NGUONTHUKHAC | CHIPHI | SODUTIETKIEM | NOTRUNGBINH | CHIPHI-NOTRUNGBINH */
@@ -276,7 +286,7 @@ void QuanLy::process() {
         for (SavingOption* opt: options) {
             int pos_daohan = pos_cur - opt->kyhan;
             if (pos_daohan >= 0 && !stk[pos_daohan]->isDaohan()) {
-                tienvochong[pos_cur] += stk[pos_daohan]->soDuSauKyHan(1);
+                tienvochong[pos_cur] += stk[pos_daohan]->soduSauKyHan(1);
                 stk[pos_daohan]->setDaohan();
             }
         }
@@ -293,7 +303,7 @@ void QuanLy::process() {
                     if (stk.empty()) {
                         cout << "QuanLy::Process(): PHA SAN (khong co so tiet kiem)\n";
                         return;
-                    } else if (rutien(-tienvochong[pos_cur]) == -1) {
+                    } else if (rutien(-tienvochong[pos_cur], pos_cur) == -1) {
                         cout << "QuanLy::Process(): PHA SAN (so du stk khong du)\n";
                         return;
                     } else {
@@ -314,7 +324,7 @@ void QuanLy::process() {
             else {
                 chenhlech -= tienvochong[pos_cur];
                 tienvochong[pos_cur] = 0;
-                if (rutien(chenhlech) == -1) {
+                if (rutien(chenhlech, pos_cur) == -1) {
                     cout << "QuanLy::process(): PHA SAN (so du stk khong du)\n";
                     return;
                 }
