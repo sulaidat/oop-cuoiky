@@ -274,6 +274,14 @@ void QuanLy::process() {
 
     for (;; pos_cur++) {
 
+        if (pos_cur >= pos_trano) {
+            idx_no++;
+            if (idx_no < no.size()) {
+                pos_trano = no[idx_no]->get_ngaytra() - get_mocthoigian();
+                ptr_no = no[idx_no];
+            }
+        }
+
         // 1. tiensauchitieu = nguonthu.khac và tienvochong = nguonthu.vochong 
         if (pos_cur >= nguonthu.size()) {
             cout << "QuanLy::process(): chua nhap Nguon thu cho thang " << getdate_mocthoigian(pos_cur) << "\n";
@@ -318,7 +326,7 @@ void QuanLy::process() {
         // nếu chenhlech > tienvochong: chenhlech -= tienvochong, tienvochong = 0,
         //     chenhlech -= rút tiền từ stk cho tới khi = 0 hoặc hết tiền stk
         //         - hết tiền stk: Tuyên bố phá sản       
-        if (pos_cur == pos_trano) {
+        if (ptr_no != NULL && pos_cur == pos_trano) {
             double chenhlech = ptr_no->tongNoNgayTra();
             if (chenhlech < tienvochong[pos_cur]) tienvochong[pos_cur] -= chenhlech;
             else {
