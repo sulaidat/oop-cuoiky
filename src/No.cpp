@@ -9,7 +9,7 @@ No::No() {
 No::No(double sotien, string ngayno, string ngaytra, int kyhan) {
     if (!checkDateFormat(ngaytra) && !checkDateFormat(ngayno)) {
         cout << "No(): invalid date format (DD-MM-YYYY)\n";
-        exit(0);
+        return;
     }
     this->ngayno = 0;
     this->ngaytra = 0;
@@ -85,17 +85,23 @@ double No::tongNoSauKyHanThu(int k) {
         cout << "No::tongNoSauKyHanThu(): vuot qua ngay tra no\n";
         exit(0);
     }
+    double tienlai=0;
     for (int i = 0; i < k; i++) {
-        res *= (1 + lai[i]);
+        tienlai+=res*lai[i];
+        // res *= (1 + lai[i]);
     }
+    res+=tienlai;
     return res;
 }
 
 double No::tongNoNgayTra() {
     double res = sotien;
+    double tienlai=0;
     for (int i = 0; i < lai.size(); i++) {
-        res *= (1 + lai[i]);
+        tienlai+=res*lai[i];
+        // res *= (1 + lai[i]);
     }
+    res+=tienlai;
     return res;
 }
 

@@ -1,6 +1,6 @@
+#define _CRT_SECURE_NO_WARNINGS
 #ifndef APP_H
 #define APP_H
-
 #include "QuanLy.h"
 #include "lib/CSVParser.h"
 #include <stdio.h>

@@ -49,6 +49,7 @@ int App::get_num() {
 void App::run() {
     init();
     while (1) {
+        // system("cls");
         print_menu();
         cout << "> ";
         int num = get_num();
@@ -59,6 +60,7 @@ void App::run() {
                 getline(cin, startday);
                 
                 quanly->update_mocthoigian(startday);
+                // system("pause");
                 break;
             }
             case Menu::NhapNguonThu: {
@@ -67,6 +69,7 @@ void App::run() {
                 switch (num) {
                     case SubMenu::ManualInput:
                         quanly->add_nguonthu();
+                        // system("pause");
                         break;
                     case SubMenu::FromFile: {
                         string filepath;
@@ -74,6 +77,7 @@ void App::run() {
                         getline(cin, filepath);
                         cout << filepath << "\n";
                         quanly->add_nguonthu_fromfile(filepath);
+                        // system("pause");
                         break;
                     }
                     default:
@@ -87,6 +91,7 @@ void App::run() {
                 switch (num) {
                     case SubMenu::ManualInput:
                         quanly->add_chiphi();
+                        // system("pause");
                         break;
                     case SubMenu::FromFile: {
                         string filepath;
@@ -94,6 +99,7 @@ void App::run() {
                         getline(cin, filepath);
                         cout << filepath << "\n";
                         quanly->add_chiphi_fromfile(filepath);
+                        // system("pause");
                         break;
                     }
                     default:
@@ -102,37 +108,45 @@ void App::run() {
                 break;
             }
             case Menu::ThemNo: {
+                if (!quanly->get_mocthoigian()) {
+                    cout << "Chua nhap ngay bat dau\n";
+                    break;
+                }
                 quanly->add_no();
+                // system("pause");
                 break;
             }
             case Menu::AddSavingOption: {
-                SavingOption* so = new SavingOption;
-                cout << "Nhap ky han (thang): "; cin >> so->kyhan;
-                cout << "Nhap lai: "; cin >> so->lai;
-                options.push_back(so);
+                quanly->add_option();
+                // system("pause");
                 break;
             }
             case Menu::InNguonThu:
                 quanly->inNguonThu();
+                // system("pause");
                 break;
             case Menu::InChiPhi:
                 quanly->inChiPhi();
+                // system("pause");
                 break;
             case Menu::InNo:
                 quanly->inNo();
+                // system("pause");
                 break;
             case Menu::XuatBangTinh: {
-                string data = quanly->exportData();
+                string data=quanly->exportData();
                 ofstream out("data/xuat.csv");
                 out << data;
                 out.close();
-                cout << "Data written to data/xuat.csv\n";
+                cout << "Data written to xuat.csv\n";
+                // system("pause");
                 break;
             }
             default:
                 cout << "Exiting...\n";
                 exit(-1);
         }
-        quanly->process();
+        quanly->process();   
+        // system("pause");
     }
 }

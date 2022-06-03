@@ -12,6 +12,7 @@ public:
     ChiPhi();
     // ChiPhi(const ChiPhi&);
     ChiPhi(double, double);
+
     double tong();
 
     void print();

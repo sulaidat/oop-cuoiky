@@ -25,6 +25,11 @@ protected:
     // other headers
     vector<double> tiensauchitieu;    // tiền sau trả chi phí và trả nợ cho tháng
     vector<double> tienvochong;
+
+    vector<double> thunhapsauchitieu;
+    vector<double> daohan;
+
+    
 public:
     QuanLy();
     QuanLy(vector<NguonThu*>, vector<ChiPhi*>, vector<No*>, vector<SoTietKiem*>, vector<SavingOption*>);
@@ -37,7 +42,7 @@ public:
     void add_chiphi_fromfile(string);
     void add_no();
     int add_stk(int, SavingOption*);
-
+    void add_option();
     // get
     int get_mocthoigian();
     string getdate_mocthoigian(int);
@@ -51,6 +56,9 @@ public:
     }
     double get_sodu_trongkyhan(int idx);
     double get_sodu_daohan(int idx);
+
+    int get_sizenguonthu();
+    int get_sizechiphi();
 
     // print
     void inNguonThu();
