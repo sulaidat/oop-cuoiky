@@ -28,8 +28,7 @@ protected:
 
     vector<double> thunhapsauchitieu;
     vector<double> daohan;
-
-    
+    int flag_thoigianphasan=0;
 public:
     QuanLy();
     QuanLy(vector<NguonThu*>, vector<ChiPhi*>, vector<No*>, vector<SoTietKiem*>, vector<SavingOption*>);

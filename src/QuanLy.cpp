@@ -284,7 +284,10 @@ string QuanLy::exportData() {
         else
             values.push_back("0");
 
-        values.push_back(to_string(daohan[i]));
+        if(i<=flag_thoigianphasan)
+            values.push_back(to_string(daohan[i]));
+        else 
+            values.push_back("0");
 
         if (i < stk.size()) {
             values.push_back(to_string(stk[i]->get_sotien()));
@@ -414,10 +417,12 @@ void QuanLy::process() {
                 if (tienvochong[pos_cur] < 0) {
                     if (stk.empty()) {
                         cout << "QuanLy::Process(): PHA SAN vao thang " << getdate_mocthoigian(pos_cur) << " (khong co so tiet kiem)\n";
+                        flag_thoigianphasan=pos_cur;
                         return;
                     }
                     else if (ruttien(-tienvochong[pos_cur], pos_cur) == -1) {
                         cout << "QuanLy::Process(): PHA SAN vao thang " << getdate_mocthoigian(pos_cur) << " (so du stk khong du)\n";
+                        flag_thoigianphasan=pos_cur;
                         return;
                     }
                     else {
@@ -430,6 +435,7 @@ void QuanLy::process() {
 
         }
 
+        flag_thoigianphasan=pos_cur;
         daohan.push_back(tiendaohan);
         // values.push_back(to_string(tiendaohan));
 
